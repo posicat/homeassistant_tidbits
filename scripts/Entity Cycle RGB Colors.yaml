@@ -1,0 +1,85 @@
+alias: Entity Cycle RGB Colors
+sequence:
+  - variables:
+      HA_colors: {}
+  - service: script.getcolornames
+    metadata: {}
+    data: {}
+    response_variable: HA_color_dict
+  - service: light.turn_on
+    metadata: {}
+    data:
+      color_name: |
+        {% set availableColors = includecolors | list %}   
+        {% set colLen = availableColors | length %} 
+        {% set ns = namespace(distances = {},ourcolors = {}) %} 
+        {% set dir =  1 if direction == 'Up' else -1 %} 
+
+        {% for color_name, color_values in HA_color_dict.items() %}
+          {% if color_name in includecolors %}
+            {% set ns.ourcolors = dict(ns.ourcolors, **{color_name: color_values}) %}
+          {% endif %}
+        {% endfor %}
+
+        {% set entityRGB = state_attr(entity, 'rgb_color') | list %}
+
+        {% for color_name, color_values in ns.ourcolors.items() %}
+          {% set distance = (
+              (color_values[0] - entityRGB[0]) **2 +
+              (color_values[1] - entityRGB[1] +0.2) **2 +
+              (color_values[2] - entityRGB[2]) **2 ) ** 0.5 %}
+          {% set ns.distances = dict(ns.distances, **{color_name: distance}) %}
+        {% endfor %}
+
+        {% set sorted = ns.distances.items() | list | sort(attribute=1) %}
+        {% set findColor = sorted[0][0] %}
+
+        {% set index = includecolors.index(findColor) %}  
+
+        {% set index = (index + colLen + dir) % colLen %} 
+
+        {{ availableColors[index] }}
+    target:
+      entity_id: |
+        {{ entity }}
+mode: single
+fields:
+  entity:
+    selector:
+      entity:
+        domain: light
+        multiple: false
+    name: entity
+    required: true
+  direction:
+    selector:
+      select:
+        options:
+          - Up
+          - Down
+    name: Direction
+    required: true
+  includecolors:
+    selector:
+      select:
+        options:
+          - red
+          - blue
+          - green
+          - purple
+          - yellow
+          - cyan
+          - orange
+          - violet
+        multiple: true
+    name: includeColors
+    required: true
+    default:
+      - red
+      - green
+      - blue
+      - purple
+      - yellow
+      - cyan
+      - orange
+      - violet
