@@ -1,0 +1,27 @@
+alias: Update JSON Status
+sequence:
+  - service: input_text.set_value
+    metadata: {}
+    data:
+      value: >
+        {% set json_data = states(text_input_name) | from_json %}  {% set
+        json_data = dict(json_data, **{name: value})  %} {{ json_data | to_json
+        }}
+    target:
+      entity_id: "{{ text_input_name }}"
+mode: single
+fields:
+  text_input_name:
+    selector:
+      text: null
+    name: text_input_name
+    required: true
+  name:
+    selector:
+      text: null
+    name: name
+    required: true
+  value:
+    selector:
+      text: null
+    name: value
