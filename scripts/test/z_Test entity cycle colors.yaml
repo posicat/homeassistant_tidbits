@@ -1,0 +1,16 @@
+alias: z_Test entity cycle colors
+sequence:
+  - service: script.entity_cycle_colors
+    metadata: {}
+    data:
+      entity: light.standing_light_light
+      direction: Down
+      includecolors:
+        - red
+        - blue
+        - green
+        - yellow
+        - cyan
+        - orange
+        - violet
+mode: single
