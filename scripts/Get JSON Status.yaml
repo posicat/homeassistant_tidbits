@@ -1,0 +1,23 @@
+alias: Get JSON Status
+sequence:
+  - variables:
+      value: |
+        {% set json_data = states(text_input_name) | from_json %}  
+
+        {% set result = json_data.get(name) %} 
+
+        {{ {'value' : result}  }}
+  - stop: return
+    response_variable: value
+mode: single
+fields:
+  text_input_name:
+    selector:
+      text: null
+    name: text_input_name
+    required: true
+  name:
+    selector:
+      text: null
+    name: name
+    required: true
