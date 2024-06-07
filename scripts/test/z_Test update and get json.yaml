@@ -1,0 +1,17 @@
+alias: z_Test update and get json
+sequence:
+  - service: script.update_json_status
+    metadata: {}
+    data:
+      text_input_name: input_text.json_test
+      name: test
+      value: "2"
+  - service: script.get_json_status
+    metadata: {}
+    data:
+      text_input_name: input_text.json_test
+      name: test
+    response_variable: status
+  - variables:
+      test: "{{ status.value >= '0' }}"
+mode: single
