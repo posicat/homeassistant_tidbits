@@ -1,0 +1,17 @@
+alias: Garage Tilt Sensor
+description: "Aeotec SmartThings Multipurpose Sensor - Zigbee - Capture current axis reedings to json"
+trigger:
+  - platform: event
+    event_type: zha_event
+    event_data:
+      device_id: c531675ac51afead939eb20e51c486b9
+condition: []
+action:
+  - service: script.update_json_status
+    metadata: {}
+    data_template:
+      text_input_name: input_text.json_garage_tilt
+      name: "{{ trigger.event.data.args.attribute_name }}"
+      value: "{{ trigger.event.data.args.value | string }}"
+mode: queued
+max: 20
