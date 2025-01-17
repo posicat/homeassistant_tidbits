@@ -1,0 +1,29 @@
+type: custom:button-card
+entity: input_select.garage_door_status
+name: Garage Door Open/Close
+show_state: true
+tap_action:
+  action: call-service
+  service: rest_command.garagedoor_openclose
+  target: {}
+icon: |
+  [[[
+    if (entity.state === "Up") return "mdi:garage-open";
+    if (entity.state === "Down") return "mdi:garage-alert";
+    if (entity.state === "Closed") return "mdi:garage";
+    if (entity.state === "Unknown") return "mdi:garage-alert";
+    return "mdi:garage";
+  ]]]
+styles:
+  card:
+    - background-color: |
+        [[[
+          if (entity.state === "Up") return "#CC3";
+          if (entity.state === "Down") return "#C33";
+          if (entity.state === "Unknown") return "#C33";
+        ]]]
+    - border-radius: 10px
+    - padding: 10px
+    - box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)
+  icon:
+    - height: 100px
